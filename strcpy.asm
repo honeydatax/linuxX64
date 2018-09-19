@@ -43,8 +43,7 @@ COPYSTR:
           RET                
    
    printf:
-    mov rdx, len    ;message length
- mov rcx, msg    ;message to write
+
  mov rbx, 1     ;file descriptor (stdout)
  mov rax, 4     ;system call number (sys_write)
  int 0x80        ;call kernel
