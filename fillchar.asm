@@ -1,8 +1,10 @@
 section .text
  global _start       ;must be declared for using gcc
 _start:                     ;tell linker entry point
+
+      mov rcx,len
  mov rbx, msg
-      mov rcx,52
+
           mov al,'*'
           call fillchar
 
