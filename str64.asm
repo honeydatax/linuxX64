@@ -23,7 +23,7 @@ str64:
           mov rsi,rbx
           mov rdi,rdx
           mov rax,[rsi]
-          mov rbp,1000000000
+          mov rbp, 1000000000000000000
           STR321:                
                     xor rdx,rdx
                     xor rcx,rcx
@@ -59,6 +59,6 @@ section .data
 
 endf db " "
 
-number dd 987654321,0
+number dq 987654321,0
 msg db '__________________________________________',0xa ;our dear string
 len equ $ - msg ;length of our dear string
