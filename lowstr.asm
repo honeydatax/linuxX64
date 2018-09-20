@@ -100,7 +100,7 @@ section .data
 endf db " "
 
 number dq 987654321,0
-msg db 'this is a string ._________________________________',0xa,0,0 ;our dear string
+msg db 'THIS IS A STRING ._________________________________',0xa,0,0 ;our dear string
 len equ $ - msg ;length of our dear string
 
 
