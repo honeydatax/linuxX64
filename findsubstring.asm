@@ -3,69 +3,26 @@ section .text
 _start:                     ;tell linker entry point
 mov rdx,msg2
 mov rbx,msg
-call FINDCHAR
+call FINDSTRING
 
-mov rbx,number
-mov [rbx],rax
-mov rdx,msg
-call str64
 
- mov rdx, len    ;message length
- mov rcx, msg    ;message to write
+ mov rdx, 10   ;message length
+ mov rcx,rax   ;message to write
  mov rbx, 1     ;file descriptor (stdout)
  mov rax, 4     ;system call number (sys_write)
  int 0x80        ;call kernel
  mov rax, 1     ;system call number (sys_exit)
  int 0x80        ;call kernel
 
-str64:
-          push rax                
-          push rbx                
-          push rcx                
-          push rdx                
-          push rdi                
-          push rsi                
-          push rbp                
-          mov rsi,rbx
-          mov rdi,rdx
-          mov rax,[rsi]
-          mov rbp, 1000000000000000000
-          STR321:                
-                    xor rdx,rdx
-                    xor rcx,rcx
-                    mov rbx,rbp
-                    clc                 
-                    div rbx                
-                    mov rsi,rdx
-                    mov ah,'0'
-                    clc                
-                    add al,ah
-                    mov [rdi],al
-                    inc rdi                
-                    mov rax,rbp
-                    xor rdx,rdx
-                    xor rcx,rcx
-                    mov rbx,10
-                    clc                
-                    div rbx                
-                    mov rbp,rax
-                    mov rax,rsi
-                    cmp rbp,0
-                    JNZ STR321
 
-          pop rbp                
-          pop rsi                
-          pop rdi                
-          pop rdx                
-          pop rcx                
-          pop rbx                
-          pop rax                
-ret
 
 LEN:                
           push rbx                
           push rcx                
-          push rdx                
+          push rdx             
+                    
+          push rsi         
+          push rdi
           mov rcx,0                
           LEN1:                
                     mov al,[rbx]
@@ -77,6 +34,8 @@ LEN:
                     JNZ LEN1                
           LEN2:                
           mov rax,rcx
+          pop rdi                
+          pop rsi          
           pop rdx                
           pop rcx                
           pop rbx                
@@ -106,14 +65,13 @@ LEN:
           mov rcx,0ffffh
           FINDCHAR3:
           mov rax,rcx
+         
           pop rdx                
           pop rcx                
           pop rbx                
           RET                
                 
-                
-                
-            COMPSTR:                
+                      COMPSTRING:
           push rbx                
           push rcx                
           push rdx                
@@ -122,28 +80,38 @@ LEN:
           mov rcx,0                
           mov rsi,rbx
           mov rdi,rdx
-          COMPSTR1:
+          COMPSTRING1:
                     mov al,[rsi]
                     mov ah,[rdi]
                     cmp al,0                
-                    JZ COMPSTR2
+                    JZ COMPSTRING2
                     cmp ah,0                
-                    JZ COMPSTR2
+                    JZ COMPSTRING3
                     cmp al,ah
-                    JNZ COMPSTR2
+                    JNZ COMPSTRING2
                     inc rdi                
                     inc rsi                
                     inc rcx                
                     cmp rcx,0                
-                    JNZ COMPSTR1
-          COMPSTR2:
-          mov rax,rcx
-          pop rsi                
-          pop rdi                
-          pop rdx                
-          pop rcx                
-          pop rbx                
-          RET                
+                    JNZ COMPSTRING1
+          COMPSTRING2:
+          cmp al,ah
+          JZ COMPSTRING3
+          JB COMPSTRING4
+          mov al,1                
+          jmp COMPSTRING5
+          COMPSTRING3:
+          mov al,0                
+          jmp COMPSTRING5
+          COMPSTRING4:
+          mov al,2                
+          COMPSTRING5:
+                    pop rsi                
+                    pop rdi                
+                    pop rdx                
+                    pop rcx                
+                    pop rbx                
+                    RET                
                     
                 
          FINDSTRING:
@@ -151,13 +119,16 @@ LEN:
           push rcx                
           push rdx                
           push rdi                
-          push rsi                
+          push rsi
+          push rbp         
+          mov rbp,rdx       
           mov rsi,rdx
           xor rax,rax
           mov al,[rsi]
           mov rdi,rax
           mov rsi,rbx
           mov rbx,rdx
+          
           call LEN
           cmp rax,0                
           JNZ FINDSTRING9
@@ -165,22 +136,30 @@ LEN:
           jmp  FINDSTRING8
           FINDSTRING9:
           mov rbx,rsi
-          mov rsi,rax
+         
+         
           FINDSTRING1:
                     mov rax,rdi
-                    call FINDCHAR
+                   
+                     call FINDCHAR
                     cmp rax,0ffffh
+                    
                     JZ FINDSTRING8
                     clc                 
                     add rbx,rax
-                    call COMPSTR
-                    cmp rsi,rax
+                   mov rdx,rbp
+                    call COMPSTRING
+                    cmp al,0
+
                     JZ FINDSTRING10
-                    inc rbx                
+                    
+                    inc rbx         
+                    
                     jmp FINDSTRING1
                     FINDSTRING10:
                     mov rax,rbx
                     FINDSTRING8:
+                    pop rbp
                     pop rsi                
                     pop rdi                
                     pop rdx                
