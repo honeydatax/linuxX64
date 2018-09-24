@@ -14,7 +14,7 @@ mov [rbx],rcx
 mov rdx,msg
 call str64
 mov rbx,msg
-;call ZERO64
+call ZERO64
 
 call printf
 pop rdx
